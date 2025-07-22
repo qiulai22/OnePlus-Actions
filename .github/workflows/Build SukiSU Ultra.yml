@@ -42,7 +42,8 @@ on:
           - 'onrplus_nord_4'
           - 'oneplus_nord_ce4_lite_5g'
           - 'oneplus_nord_ce4'
-        default: 'oneplus_12'
+          - 'gt6'
+        default: 'gt6'
         
       CPUD:
         description: "处理器代号"
@@ -231,12 +232,12 @@ jobs:
          echo "🌐 正在初始化内核仓库..."
          mkdir kernel_workspace && cd kernel_workspace
          
-         repo init -u https://github.com/Xiaomichael/kernel_manifest.git -b refs/heads/oneplus/${{ github.event.inputs.CPU }} -m ${{ github.event.inputs.FEIL }}.xml --depth=1
+         repo init -u https://github.com/qiulai22/kernel_manifest.git -b refs/heads/realme/${{ github.event.inputs.CPU }} -m ${{ github.event.inputs.FEIL }}.xml --depth=1
          echo "🔄 同步代码库(使用$(nproc --all)线程)..."
          repo sync -c -j$(nproc --all) --no-tags --no-clone-bundle --force-sync
          
          echo "⬇️ 下载内核设置工具..."
-         curl -L -o kernel_setup.bin https://github.com/Xiaomichael/OnePlus-Actions/raw/Build/script/kernel_setup.bin
+         curl -L -o kernel_setup.bin https://github.com/qiulai22/OnePlus-Actions/raw/Build/script/kernel_setup.bin
          chmod +x kernel_setup.bin
          ./kernel_setup.bin
          
@@ -253,7 +254,7 @@ jobs:
           
           cd KernelSU
           echo "⬇️ 下载KernelSU设置工具..."
-          curl -L -o sukisu_setup.bin https://github.com/Xiaomichael/OnePlus-Actions/raw/Build/script/sukisu_setup.bin
+          curl -L -o sukisu_setup.bin https://github.com/qiulai22/OnePlus-Actions/raw/Build/script/sukisu_setup.bin
           chmod +x sukisu_setup.bin
           
           # 验证Makefile存在
@@ -271,7 +272,7 @@ jobs:
           cd kernel_workspace
           echo "⬇️ 下载SUSFS补丁..."
           git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
-          git clone https://github.com/Xiaomichael/kernel_patches.git
+          git clone https://github.com/qiulai22/kernel_patches.git
           git clone https://github.com/ShirkNeko/SukiSU_patch.git
           # git clone https://github.com/Lama3L9R/sukisu-quick-setup.git
           
@@ -536,22 +537,22 @@ jobs:
           # file-path: "${{ steps.set_name.outputs.ARTIFACT_NAME }}.zip"
           # caption-path: release.txt
 
-      - name: "🤖 Get bot script | 获取 bot 脚本"
-        uses: actions/checkout@v4
-        with:
-         path: bot
+    #  - name: "🤖 Get bot script | 获取 bot 脚本"
+     #   uses: actions/checkout@v4
+      #  with:
+       #  path: bot
 
-      - name: "📤 Upload to telegram | 上传至Telegram群组"
-        run: |
-          if [ ! -z "${{ secrets.BOT_TOKEN }}" ]; then
-            echo "📤 正在上传到Telegram..."
-            cd AnyKernel3
-            zip -q -r "../${{ steps.set_name.outputs.ARTIFACT_NAME }}.zip" ./*
-            cd ..
-            pip3 install telethon
-            python3 ./bot/script/buildbot.py "./${{ steps.set_name.outputs.ARTIFACT_NAME }}.zip"
-            echo "✅ 文件已上传到Telegram"
-          fi
+     # - name: "📤 Upload to telegram | 上传至Telegram群组"
+      #  run: |
+        #  if [ ! -z "${{ secrets.BOT_TOKEN }}" ]; then
+         #   echo "📤 正在上传到Telegram..."
+         #   cd AnyKernel3
+         #   zip -q -r "../${{ steps.set_name.outputs.ARTIFACT_NAME }}.zip" ./*
+         #   cd ..
+          #  pip3 install telethon
+           # python3 ./bot/script/buildbot.py "./${{ steps.set_name.outputs.ARTIFACT_NAME }}.zip"
+           #echo "✅ 文件已上传到Telegram"
+       #   fi
         env:
           CHATID: ${{secrets.CHATID}}
           BOT_TOKEN: ${{secrets.BOT_TOKEN}}
